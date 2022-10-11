@@ -8,16 +8,20 @@ const props = defineProps({
 
 const profile = ref({})
 const error = ref('')
+const loading = ref(false)
 
 const fetch_info = function() {
+  loading.value = true;
   Users.get(props.username)
   .then((response) => {
     console.log(response.data)
     profile.value = response.data
+    loading.value = false;
   })
   .catch(() => {
     console.log("Failed to fetch the information")
     error.value = '... Failed to fetch user information ...'
+    loading.value = false;
   })
 }
 fetch_info();       // Initial Fetch!
@@ -33,6 +37,9 @@ watch(username, async (newUsername, oldUsername) => {
 <template>
   <div v-if="error">
     Failed to get profile.
+  </div>
+  <div v-else-if="loading">
+    ... Loading the requested profile ...
   </div>
   <div v-else>
     <h1>{{ profile.login }}</h1>
